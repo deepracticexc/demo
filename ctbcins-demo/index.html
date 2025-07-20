@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 AI種子培訓計畫應用案例分享</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Axios for API calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- 背景粒子動畫 -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="presentation-container">
+        <!-- 全屏按鈕 - 左上角 -->
+        <div class="fullscreen-control">
+            <button id="fullscreenBtn" onclick="toggleFullscreen()" title="全屏演示">
+                <span class="fullscreen-icon">⛶</span>
+            </button>
+        </div>
+        
+        <!-- 導航控制 -->
+        <div class="nav-controls">
+            <button id="prevBtn" onclick="previousSlide()">‹ 上一頁</button>
+            <span id="slideCounter">1 / 4</span>
+            <button id="nextBtn" onclick="nextSlide()">下一頁 ›</button>
+        </div>
+
+   <!-- 幻灯片容器 -->
+    <div class="slides-container">
+        <!-- 第1页：個人AI工具使用經驗 -->
+        <div class="slide active" id="slide1">
+            <div class="slide-content">
+                <h1 class="slide-title">AI應用實戰經驗分享</h1>
+                <p class="slide-subtitle">從PPT困境到現代化動態演示 - 以台北市交通數據接入為例</p>
+                
+                <div class="feature-cards">
+                    <div class="feature-card">
+                        <h3 class="feature-title" data-icon="💻">傳統辦公軟體局限</h3>
+                        <p class="feature-desc">1. 簡報製作困境</p>
+                        <p class="feature-desc">2. 版本管理混亂</p>
+                        <p class="feature-desc">3. 文件保存問題</p>
+                       
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3 class="feature-title" data-icon="🏢">現代化 AI 解決方案</h3>
+                        <p class="feature-desc">簡報 → 網頁：動態互動體驗</p>
+                        <p class="feature-desc">靜態 → 動態：實時數據呈現</p>
+                        <p class="feature-desc">理論 → 實戰：即時數據演示</p>
+                        
+                    </div>
+                    
+                    <div class="feature-card has-thumbnail">
+                        <h3 class="feature-title" data-icon="📝">模擬案例</h3>
+                        <p class="feature-desc">接入公開資料/即時數據<br>嵌入呈現於在線演示文稿</p>
+                    </div>
+                </div>
+
+                <div class="bottom-info">
+                    <p style="margin-top: 30px; font-size: 1.2rem; color: #d0d7de;">
+                        <strong>楊清禾 | CE016@ctbcins.com</strong><br>
+                        2025 AI種子培訓計畫應用案例分享
+                    </p>
+                </div>
+            </div>
+        </div>
+
+            <!-- 第2页：台北市交通數據演示 -->
+            <div class="slide" id="slide2">
+                <div class="slide-content">
+                    <h2>台北市交通流量監測系統</h2>
+                    <p class="slide-subtitle">實時數據儀表板</p>
+                    
+                    <div class="data-cards">
+                        <div class="data-card">
+                            <h3>🚗 即時車流量</h3>
+                            <div class="value" id="currentTraffic">-</div>
+                            <div class="unit">輛/小時</div>
+                        </div>
+                        
+                        <div class="data-card">
+                            <h3>⚡ 平均速度</h3>
+                            <div class="value" id="avgSpeed">-</div>
+                            <div class="unit">km/h</div>
+                        </div>
+                        
+                        <div class="data-card">
+                            <h3>📊 監測站數量</h3>
+                            <div class="value" id="monitorPoints">-</div>
+                            <div class="unit">個</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <p style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 10px;">
+                            本數據整合台北市政府開放資料平台，提供即時交通流量分析與視覺化展示
+                        </p>
+                        <p style="font-size: 0.9rem; opacity: 0.6;" id="lastUpdateTime">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3頁：交通流量趨勢圖 -->
+            <div class="slide" id="slide3">
+                <div class="slide-content">
+                    <h2>交通流量趨勢分析</h2>
+                    <div class="chart-container">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                    <div class="chart-info">
+                        <p>顯示過去24小時的交通流量變化趨勢</p>
+                        <div class="legend">
+                            <span class="legend-item"><span class="color-box" style="background: #3b82f6;"></span>車流量</span>
+                            <span class="legend-item"><span class="color-box" style="background: #10b981;"></span>平均速度</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4張：總結與感謝 -->
+            <div class="slide" id="slide4">
+                <div class="slide-content">
+                    <h2>ENDING</h2>                    
+                    <div style="background: rgba(239, 68, 68, 0.1); border-left: 5px solid #ef4444; border-radius: 20px; padding: 30px; margin: 30px 0; text-align: left;">
+                        <h3 style="color: #f0f6fc; font-size: 1.8rem; margin-bottom: 20px;">💡 核心觀點回顧</h3>
+                        <p style="color: #b1bac4; line-height: 1.6; font-size: 1.2rem; margin-bottom: 20px;">
+                            通過今天的分享，我們看到AI不應該被局限在傳統框架中，
+                            而是要釋放其真正的創造潛力。<br>
+                            AI協作不僅提效或替代人類，而是增強人類的創造力；
+                            關鍵在於學會與AI有效溝通，釋放無限可能。
+                        </p>
+
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 20px;">
+                        <h3 style="font-size: 2rem; color: #10b981; margin: 20px 0;">感謝聆聽</h3>
+                        <p style="font-size: 1.3rem; color: #d0d7de; line-height: 1.8;">
+                            <span style="color: #22c55e; font-weight: bold;">讓我們一起擁抱AI時代，創造更多可能！</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 進度指示器 -->
+        <div class="progress-indicator">
+            <div class="progress-dot active" onclick="goToSlide(1)"></div>
+            <div class="progress-dot" onclick="goToSlide(2)"></div>
+            <div class="progress-dot" onclick="goToSlide(3)"></div>
+            <div class="progress-dot" onclick="goToSlide(4)"></div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator">
+        <div class="loading-spinner"></div>
+        <p class="loading-message">正在載入交通數據...</p>
+        <div class="loading-progress">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+    
+    <!-- Error Message -->
+    <div id="errorMessage" class="error-message" style="display: none;">
+        <div class="error-content">
+            <span class="error-icon">⚠️</span>
+            <span class="error-text">數據載入失敗</span>
+            <button class="error-close" onclick="hideErrorMessage()">×</button>
+        </div>
+    </div>
+    
+
+
+    <!-- 載入依賴文件 -->
+    <script src="config.js"></script>
+    <script src="apiService.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
