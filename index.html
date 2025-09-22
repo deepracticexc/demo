@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>產險資訊全景與技術藍圖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', '微軟正黑體', Arial, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 星空效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(2px 2px at 160px 30px, #ddd, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 3s linear infinite;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        @keyframes sparkle {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-100px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5282 0%, #2d3748 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .architecture-container {
+            padding: 30px 30px 0 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .service-devops-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* 底層基礎架構樣式 */
+        .bottom-layers {
+            padding: 20px 30px 30px 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* 中間件特殊布局 */
+        .middleware-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .middleware-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* 儲存服務特殊布局 */
+        .storage-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .storage-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .storage-row-last {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .main-architecture {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .layer {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .layer-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #4299e1, #38b2ac) 1;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        /* 應用層第一行特殊樣式 */
+        .app-row-primary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .component {
+            background: linear-gradient(135deg, #4299e1 0%, #38b2ac 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .component:hover::before {
+            left: 100%;
+        }
+
+        .component:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .component.platform {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .component.service {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .component.shared {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .component.middleware {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .component.storage {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .devops-section {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .devops-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #e2e8f0;
+        }
+
+        .devops-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .devops-category {
+            margin-bottom: 20px;
+        }
+
+        .devops-category h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .devops-component {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .devops-component:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(10px);
+        }
+
+        .highlight-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .service-devops-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .component-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .shared-service-row-1 {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            .shared-service-row-2 {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .devops-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .smart-data-service-row {
+                grid-template-columns: 1fr;
+            }
+
+            .shared-service-row .service-group {
+                width: 100% !important;
+            }
+
+            .shared-service-row-1,
+            .shared-service-row-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .app-row-primary {
+                grid-template-columns: 1fr;
+            }
+            
+            .bottom-layers {
+                grid-template-columns: 1fr;
+                padding: 0 20px 20px 20px;
+            }
+            
+            .middleware-row,
+            .storage-row,
+            .storage-row-last {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* SVG 圖標樣式 */
+        .layer-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .component-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
+            fill: currentColor;
+        }
+
+        /* ToG服务特殊样式 */
+        .tog-main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 10px !important;
+            position: relative;
+        }
+
+        .tog-main::after {
+            content: '▼';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .tog-services {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .tog-services::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .tog-sub {
+            background: linear-gradient(135deg, #a8b8f0 0%, #b8a8d8 100%) !important;
+            font-size: 0.85rem !important;
+            margin-bottom: 8px !important;
+            margin-left: 10px !important;
+            position: relative;
+            border-left: 3px solid #667eea !important;
+            padding-left: 20px !important;
+        }
+
+        .tog-sub::before {
+            content: '•';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2rem;
+            background: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+        }
+
+        /* 服務結構樣式 */
+        .service-structure {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 共用服務佈局 */
+        .shared-service-row {
+            display: flex;
+            justify-content: stretch;
+        }
+
+        /* 智能與數據服務佈局 */
+        .smart-data-service-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .service-group {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Service主項目樣式 */
+        .service-main {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 12px !important;
+            position: relative;
+        }
+
+        .service-main::after {
+            content: '▼';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .service-subs {
+            margin-left: 20px;
+            position: relative;
+        }
+
+        /* 共用服務子項目水平佈局 */
+        .shared-service-subs {
+            margin-left: 0px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 第一行三個模塊 */
+        .shared-service-row-1 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* 第二行兩個模塊，左右對齊 */
+        .shared-service-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* 共用服務子項目樣式調整 */
+        .shared-service-subs .service-sub {
+            margin-left: 0px !important;
+            border-left: none !important;
+            padding-left: 16px !important;
+        }
+
+        .shared-service-subs .service-sub::before {
+            display: none !important;
+        }
+
+        .shared-service-subs::before {
+            display: none !important;
+        }
+
+        .service-subs::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 2px;
+        }
+
+        .service-sub {
+            background: linear-gradient(135deg, #fdbac8 0%, #faa2c1 100%) !important;
+            font-size: 0.85rem !important;
+            margin-bottom: 8px !important;
+            margin-left: 10px !important;
+            position: relative;
+            border-left: 3px solid #f093fb !important;
+            padding-left: 20px !important;
+        }
+
+        .service-sub::before {
+            content: '•';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #f093fb;
+            font-weight: bold;
+            background: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+        }
+
+        /* DevOps工具層次結構樣式 */
+        .devops-tool-group {
+            margin-bottom: 15px;
+        }
+
+        .devops-main {
+            background: rgba(255, 255, 255, 0.2) !important;
+            font-weight: 700 !important;
+            margin-bottom: 8px !important;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .devops-main::after {
+            content: '▼';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            opacity: 0.8;
+            color: #e2e8f0;
+        }
+
+        .devops-subs {
+            margin-left: 20px;
+            position: relative;
+        }
+
+        .devops-subs::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 1px;
+        }
+
+        .devops-sub {
+            background: rgba(255, 255, 255, 0.1) !important;
+            font-size: 0.85rem !important;
+            margin-bottom: 6px !important;
+            margin-left: 10px !important;
+            position: relative;
+            border-left: 2px solid rgba(255, 255, 255, 0.3) !important;
+            padding-left: 15px !important;
+        }
+
+        .devops-sub::before {
+            content: '•';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: bold;
+            background: rgba(45, 55, 72, 0.8);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>產險資訊全景與技術藍圖</h1>
+            <p class="subtitle">變革創新 追求卓越 | 中信產險 2025H1 數位資訊處會議</p>
+        </div>
+
+        <div class="architecture-container">
+            <!-- 應用層 -->
+            <div class="layer floating-animation">
+                <h2 class="layer-title">
+                    <svg class="layer-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.95 9 11 5.16-1.05 9-5.45 9-11V7l-10-5z"/>
+                    </svg>
+                    應用層
+                </h2>
+                <!-- 第一行：主要平台系統 -->
+                <div class="app-row-primary">
+                    <div class="component platform">B2B 新企業平台</div>
+                    <div class="component platform">B2C 官網</div>
+                    <div class="component platform">新核心</div>
+                </div>
+                <!-- 第二行：其他應用系統 -->
+                <div class="component-grid" style="margin-top: 15px;">
+                    <div class="component platform">雇主/補暨團傷系統</div>
+                    <div class="component platform">再保險系統</div>
+                    <div class="component platform">多元理賠收件平台</div>
+                    <div class="component platform">新件要保收件系統</div>
+                </div>
+            </div>
+
+            <!-- 基礎服務層與DevOps並排 -->
+            <div class="service-devops-grid">
+                <!-- 基礎服務層 -->
+                <div class="layer floating-animation" style="animation-delay: 0.2s;">
+                    <h2 class="layer-title">
+                        <svg class="layer-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2M21 9V7L15 1H5C3.89 1 3 1.89 3 3V7H9V9H21M3 13V11H21V13H3M3 17V15H21V17H3M3 21V19H21V21H3Z"/>
+                        </svg>
+                        基礎服務層
+                    </h2>
+
+                    <div class="service-structure" style="margin-top: 20px;">
+                        <!-- 共用服務模塊 - 上方 -->
+                        <div class="shared-service-row">
+                            <div class="service-group" style="width: 100%;">
+                                <div class="component service service-main">共用服務</div>
+                                <div class="shared-service-subs">
+                                    <div class="shared-service-row-1">
+                                        <div class="component service service-sub">CWP<br>( 地址正規化 / 監理查詢 / 公會報送 )</div>
+                                        <div class="component service service-sub">To G<br>( 關貿(任車/強車)、電子保單 )</div>
+                                        <div class="component service service-sub">MSG Service<br>( 68818簡訊, Mail郵件, Line服務 )</div>
+                                    </div>
+                                    <div class="shared-service-row-2">
+                                        <div class="component service service-sub">MOS(Multiple Object Service)</div>
+                                        <div class="component service service-sub">SSO-Keycloak</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 智能服務與數據服務模塊 - 下方並排 -->
+                        <div class="smart-data-service-row">
+                            <!-- 智能服務模塊 -->
+                            <div class="service-group">
+                                <div class="component service service-main">智能服務</div>
+                                <div class="service-subs">
+                                    <div class="component service service-sub">人臉識別 (FRS)</div>
+                                    <div class="component service service-sub">OCR</div>
+                                    <div class="component service service-sub">Voice Intelligent Service (TTS & STT)</div>
+                                </div>
+                            </div>
+
+                            <!-- 數據服務模塊 -->
+                            <div class="service-group">
+                                <div class="component service service-main">數據服務</div>
+                                <div class="service-subs">
+                                    <div class="component service service-sub">統計報表</div>
+                                    <div class="component service service-sub">OLAP</div>
+                                    <div class="component service service-sub">資料查詢</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DevOps 區塊 -->
+                <div class="devops-section floating-animation" style="animation-delay: 0.8s;">
+                    <h2 class="devops-title">🚀 DevOps</h2>
+                    <div class="devops-grid">
+                        <div class="devops-category">
+                            <h3>AI Coding</h3>
+                            <div class="devops-component">Cursor AI</div>
+                            <div class="devops-tool-group">
+                                <div class="devops-component devops-main">IntelliJ IDEA +</div>
+                                <div class="devops-subs">
+                                    <div class="devops-component devops-sub">Claude AI</div>
+                                    <div class="devops-component devops-sub">Github Copilot</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="devops-category">
+                            <h3>CICD</h3>
+                            <div class="devops-component">Jenkins</div>
+                            <div class="devops-component">ArgoCD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底層基礎架構 -->
+        <div class="bottom-layers">
+            <!-- 中間件層 -->
+            <div class="layer floating-animation" style="animation-delay: 0.4s;">
+                <h2 class="layer-title">🔧 中間件 (Middleware)</h2>
+                <div class="middleware-layout">
+                    <!-- 第一行 -->
+                    <div class="middleware-row">
+                        <div class="component middleware">APIM</div>
+                        <div class="component middleware">Scheduler</div>
+                        <div class="component middleware">Logging</div>
+                        <div class="component middleware">Monitor</div>
+                    </div>
+                    <!-- 第二行 -->
+                    <div class="middleware-row">
+                        <div class="component middleware">HA-Service</div>
+                        <div class="component middleware">MinIO</div>
+                        <div class="component middleware">Kafka</div>
+                        <div class="component middleware">Kubernetes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 儲存服務層 -->
+            <div class="layer floating-animation" style="animation-delay: 0.6s;">
+                <h2 class="layer-title">💾 數據儲存 (Storage)</h2>
+                <div class="storage-layout">
+                    <!-- 第一行 -->
+                    <div class="storage-row">
+                        <div class="component storage">Oracle</div>
+                        <div class="component storage">DB2 For AS400</div>
+                        <div class="component storage">SQL Server</div>
+                    </div>
+                    <!-- 第二行 -->
+                    <div class="storage-row-last">
+                        <div class="component storage">PostgreSQL</div>
+                        <div class="component storage">MongoDB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 導出控制按鈕 -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <button id="exportPNG" style="background: #38b2ac; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(56, 178, 172, 0.3);">導出 PNG</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 添加互動效果
+        document.querySelectorAll('.component').forEach(component => {
+            component.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                }, 100);
+                
+                // 顯示組件資訊 (可以根據需要擴展)
+                console.log(`選擇了組件: ${this.textContent}`);
+            });
+        });
+
+        // 載入動畫
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.layer').forEach((layer, index) => {
+                layer.style.opacity = '0';
+                layer.style.transform = 'translateY(50px)';
+
+                setTimeout(() => {
+                    layer.style.transition = 'all 0.6s ease';
+                    layer.style.opacity = '1';
+                    layer.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // PNG 導出功能
+        function exportToPNG() {
+            const container = document.querySelector('.container');
+
+            // 暫時隱藏導出按鈕
+            const buttons = document.querySelector('div[style*="position: fixed"]');
+            buttons.style.display = 'none';
+
+            html2canvas(container, {
+                backgroundColor: 'transparent',
+                scale: 2,
+                width: container.offsetWidth,
+                height: container.offsetHeight
+            }).then(canvas => {
+                // 恢復按鈕顯示
+                buttons.style.display = 'block';
+
+                const link = document.createElement('a');
+                link.download = '產險資訊全景與技術藍圖.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        // 綁定事件
+        document.getElementById('exportPNG').addEventListener('click', exportToPNG);
+    </script>
+</body>
+</html>
